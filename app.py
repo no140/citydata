@@ -31,6 +31,10 @@ def index():
 def hoodmap():
   return render_template('map.html')
 
+@app.route('/temp')
+def temp():
+  return render_template('temp.html')
+
 @app.route('/bokeh')
 def bokeh():
   return render_template('bokeh.html')
@@ -81,7 +85,7 @@ def graph():
 	else:
 		city = boro.upper()
 
-	calls = 50000#100000
+	calls = 100000#100000
 	agencies = ("DEP","DOB","DOT","HPD","NYPD","DSNY","FDNY","DPR")#, "DOHMH")#,"DHS")
 
 	agencyList = ','.join('"%s"' % x for x in agencies)

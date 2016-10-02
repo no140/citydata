@@ -81,7 +81,7 @@ def graph():
 	else:
 		city = boro.upper()
 
-	calls = 100000#100000
+	calls = 50000#100000
 	agencies = ("DEP","DOB","DOT","HPD","NYPD","DSNY","FDNY","DPR")#, "DOHMH")#,"DHS")
 
 	agencyList = ','.join('"%s"' % x for x in agencies)
