@@ -62,7 +62,7 @@ def graph():
 	if not os.path.exists(cache_dir):
 	    os.mkdir(cache_dir)
 
-	@checkpoint(key=lambda args, kwargs: urllib.parse.quote(args[0]) + '_' + str(args[1]) + '.p', work_dir=cache_dir, refresh=True)  #.parse
+	@checkpoint(key=lambda args, kwargs: urllib.parse.quote(args[0]) + '_' + str(args[1]) + '.p', work_dir=cache_dir)#, refresh=True)  #.parse
 	def get_data(city, rows, where):
 	    params = { #'format'        :'json', 
 		       '$limit':         rows, 
