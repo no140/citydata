@@ -122,7 +122,7 @@ def graph():
 	df['created'] = df.created.dt.date
 	countdf = df[['created','agency',]].groupby(['created','agency'], as_index=False).size()
 	unstacked = countdf.unstack(level=-1, fill_value=0)
-	print(unstacked)
+	if verbose>0: print(unstacked)
 	#x = agdf['created'].tolist()
 	#y = agdf['agency'].tolist()
 	columns = dict()
@@ -162,7 +162,7 @@ def graph():
 	#p = TimeSeries(xyvalues, x_mapper_type='datetime', xlabel='Date', legend=True, title=title, ylabel='Number of calls per day')
 	scatter = []
 	for k,v in columns.items():#range(len(agencies)):
-		print(k)#agencies[i])
+		if verbose>1: print(k)#agencies[i])
 		if k != 'Date':
 			scatter.append(Scatter(xyvalues, x='Date', y=k, color=agencydict[k]))
 	'''

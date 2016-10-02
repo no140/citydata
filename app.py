@@ -68,6 +68,7 @@ def graph():
 		       '$limit':         rows, 
 				#'$where' :		 'created_date between \'2016-01-10T12:00:00.000\' and \'2016-09-29T00:00:00.000\'', #"created_date in('2016')",
 				'$order':		 'created_date',
+				'$select':		'created_date,closed_date,agency,incident_zip,complaint_type,descriptor,latitude,longitude',
 		       'city' :          city,
 		        '$where' :         where}
 	    print('making API request...')
