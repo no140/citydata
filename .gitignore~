@@ -1,0 +1,13 @@
+venv
+input
+docs
+tech
+static
+cache
+*.p
+prep
+README2
+*.pyc
+staticfiles
+.env
+db.sqlite3

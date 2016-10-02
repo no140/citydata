@@ -1,0 +1,23 @@
+<html>
+
+  <head>
+    <title>311 Data Plot</title>
+    <!-- style -->
+    <link rel="stylesheet" type="text/css" href="style1.css">
+    <!-- js -->
+  </head>
+  <body> 
+ 
+
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+
+<script type="text/javascript">
+d3.select("body").append("p").text("New paragraph!");
+
+	d3.json("nynta_var.geojson", function(error, data) {
+    		console.log(data); // this is your data
+}
+
+</script>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Stock Symbol Input</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+		<!--<link rel=stylesheet type=text/css href='/static/style.css'>-->
+	</head>
+	<body>
+		<div class=page>
+  			<h1>User Input</h1>
+  			<div class=metanav>
+
+    			<h4>Please enter a stock ticker eg. GOOG:</h4>
+
+    			<form id='input' method='post' action='/graph'>	
+	  			<p>
+					Ticker symbol: <input type='text' name='ticker' />
+					<input type="submit" value="Submit">
+
+	  			</p>
+				</form>
+
+  			</div>
+		</div>
+	</body>
+</html>
