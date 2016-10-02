@@ -12,7 +12,6 @@ backports-abc==0.4
 beautifulsoup4==4.2.1
 bokeh==0.12.2
 chardet==2.2.1
-checkbox==0.17.7.dev
 checkbox-ng==0.3
 checkbox-support==0.2
 click==6.6
