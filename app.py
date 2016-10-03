@@ -8,9 +8,9 @@ import json
 import multiprocessing
 import gevent
 
-#from ediblepickle import checkpoint
+from ediblepickle import checkpoint
 import os
-#import urllib	#for python3, remove '2' and add .parse before quote
+import urllib	#for python3, remove '2' and add .parse before quote
 import datetime
 import requests
 from bokeh.plotting import figure, output_file, show
@@ -64,7 +64,7 @@ url_census = 'https://data.cityofnewyork.us/resource/w5g7-dwbx.json'
 def graph():
 	boro = request.form['boro']
 	print("The requested borough is '" + boro.upper() + "'")
-	'''
+	#'''
 	cache_dir = 'cache'
 	if not os.path.exists(cache_dir):
 	    os.mkdir(cache_dir)
@@ -138,30 +138,33 @@ def graph():
 	title = boro.upper() +' 311 calls  from '+startdate+' to '+enddate#routed to '+agency+'
 	defaults.plot_width = 450
 	defaults.plot_height = 400
-	#p = figure(x_axis_type="datetime",plot_width=800, plot_height=600, title=title)# title=title)
-	#p.grid.grid_line_alpha = 0.5
-	#p.xaxis.axis_label = 'Date (m-d)'
-	#p.yaxis.axis_label = 'Number of calls per day'
-	#p.ygrid.band_fill_color = "olive"
-	#p.ygrid.band_fill_alpha = 0.1
+	p = figure(x_axis_type="datetime",plot_width=800, plot_height=600, title=title)# title=title)
+	p.grid.grid_line_alpha = 0.5
+	p.xaxis.axis_label = 'Date (m-d)'
+	p.yaxis.axis_label = 'Number of calls per day'
+	p.ygrid.band_fill_color = "olive"
+	p.ygrid.band_fill_alpha = 0.1
+	for k,v in unstacked.items():
+		if k in agencyList:
+			p.line(x=unstacked['Date'].tolist(), y=unstacked[k].tolist(), color=agencydict[k], legend=k)	
 	#p.line(x, y, color='navy')
 	#p.circle(x, y, color='navy')
-	#p = TimeSeries(xyvalues, x_mapper_type='datetime', xlabel='Date', legend=True, title=title, ylabel='Number of calls per day')
-	#'''
+	#p = TimeSeries(unstacked, x_mapper_type='datetime', xlabel='Date', legend=True, title=title, ylabel='Number of calls per day')
+	'''
 	scatter = []
 	for k,v in unstacked.items():#columns.items():#range(len(agencies)):
 		if verbose>0: print(k)#agencies[i])
 		if k in agencyList:#!= 'Date':
 			scatter.append(Scatter(unstacked, x='Date', y=k, color=agencydict[k]))#xyvalues
-	#'''
+	'''
 	'''
 	for index, row in df.iterrows():
 		print('.', end="")
 		p.scatter(row['long'],row['lat'],fill_color=agencydict[row['agency']], line_width=0.0)#, legend="bottom_right")
 	'''
 	print('starting to render')
-	g = gridplot([s for s in scatter], ncols=4, title=title)
-	script, div = components(g)
+	#g = gridplot([s for s in scatter], ncols=4, title=title)
+	script, div = components(p)#g)
 	return render_template('graph.html', script=script, div=div)
 	#output_file('templates/gridplots.html', title=title)
 	#show(g)
