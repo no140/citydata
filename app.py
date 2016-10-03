@@ -8,9 +8,9 @@ import json
 import multiprocessing
 import gevent
 
-#from ediblepickle import checkpoint
+from ediblepickle import checkpoint
 import os
-#import urllib	#for python3, remove '2' and add .parse before quote
+import urllib	#for python3, remove '2' and add .parse before quote
 import datetime
 import requests
 from bokeh.plotting import figure, output_file, show
@@ -65,20 +65,23 @@ def graph():
 	boro = request.form['boro']
 	print("The requested borough is '" + boro.upper() + "'")
 	plot = request.form['plot']
-	'''
+	aftermonth = request.form['month']
+	afteryear = request.form['year']
+	afterdate = r"'"+afteryear+'-'+aftermonth+r"-01'"#r"'2016-01-01'"
+	#'''
 	cache_dir = 'cache'
 	if not os.path.exists(cache_dir):
 	    os.mkdir(cache_dir)
 
-	@checkpoint(key=lambda args, kwargs: urllib.parse.quote(args[0]) + '_' + str(args[1]) + '.p', work_dir=cache_dir)#, refresh=True)  #.parse'''
-	def get_data(city, rows, where):
+	@checkpoint(key=lambda args, kwargs: urllib.parse.quote(args[0]) + '_' + str(args[1]) + '.p', work_dir=cache_dir, refresh=True)  #.parse'''
+	def get_data(city, rows, where,date):
 	    params = { #'format'        :'json', 
 		       '$order':		 'created_date',
 				'$limit':         rows, 
-				'$where' :		 'created_date between \'2016-01-01T00:00:00\' and 2016-10-01T00:00:00', #"created_date in('2016')",
+				'$where':		 'created_date>='+date, #r"created_date>='2016-01-01'",#'created_date%3E%3D-%272016-01-01%27',#>='2016-01-01'',# between \'2016-01-01T00:00:00\' and 2016-10-01T00:00:00', #"created_date in('2016')",
 				'$select':		'created_date,closed_date,agency,incident_zip,complaint_type,descriptor,latitude,longitude',
-		       'city' :          city,
-		        '$where' :         where}
+		       'city' :          city}#,
+		        #'$where' :         where}
 	    print('making API request...')
 	    result = requests.get(url, params=params)
 	    print('API request complete.')
@@ -89,13 +92,13 @@ def graph():
 	else:
 		city = boro.upper()
 
-	calls = 50000#100000
+	calls = 100000#100000
 	agencies = ("DEP","DOB","DOT","HPD","NYPD","DSNY","FDNY","DPR")#, "DOHMH")#,"DHS")
 
 	agencyList = ','.join('"%s"' % x for x in agencies)
 	print(agencyList)
 	print('getting data from '+city)
-	r = get_data(city,calls,'agency in('+agencyList+')')
+	r = get_data(city,calls,'agency in('+agencyList+')',afterdate)
 
 	df = pd.read_json(r.text, convert_dates=True)
 	if verbose>1: print(df.head());print(len(df));print(df.columns.tolist())

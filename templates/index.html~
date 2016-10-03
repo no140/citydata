@@ -20,14 +20,12 @@
 					Borough: <input type='text' name='boro' />
 					<!--<input type="submit" value="Submit"> -->
 
-	  			</p>
-				<p>
 					Plot: 
 					<select name="plot">
 					<option value="multi">multi-line</option>
 					<option value="grid">gridplots</option>
 				  </select>
-					<br>
+					
 				  <input type="submit" value="Submit">
 
 	  			</p>
