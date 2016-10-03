@@ -1,12 +1,7 @@
 venv
-input
-docs
-tech
-static
 cache
+old
 *.p
-prep
-README2
 *.pyc
 staticfiles
 .env

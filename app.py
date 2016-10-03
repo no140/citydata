@@ -40,7 +40,7 @@ def temp():
 def bokeh():
   return render_template('bokeh.html')
 
-verbose = 1
+verbose = 0
 
 url = 'https://data.cityofnewyork.us/resource/fhrw-4uyv.json'
 url3 = 'https://data.cityofnewyork.us/resource/fhrw-4uyv.json?city=NEW YORK&$limit=3000&$where=agency in("DEP","DOB","DOT","HPD","NYPD","DSNY","FDNY","DPR")'
@@ -124,33 +124,12 @@ def graph():
 	#y = df['lat'].tolist()
 	#print(y)
 	#x = df['long'].tolist()
-	#agency="NYPD"
-	#agdf = df[df['agency']==agency]
 	df['created'] = pd.to_datetime(df.created, infer_datetime_format=True, errors='coerce')
 	df['created'] = df.created.dt.date
 	countdf = df[['created','agency',]].groupby(['created','agency'], as_index=False).size()
 	unstacked = countdf.unstack(level=-1, fill_value=0)
 	if verbose>0: print(unstacked)
-	#x = agdf['created'].tolist()
-	#y = agdf['agency'].tolist()
-	#columns = dict()
 	unstacked['Date']=[datetime.datetime.combine(d, datetime.datetime.min.time()) for d in unstacked.index.tolist()]#columns['Date']
-	#for col in unstacked.columns.tolist():
-		#columns[col]=unstacked[col].tolist()
-	#xyvalues = pd.DataFrame(columns)
-	'''
-	xyvalues = pd.DataFrame(dict(
-		    Date=[datetime.datetime.combine(d, datetime.datetime.min.time()) for d in unstacked.index.tolist()],
-			NYPD=unstacked.NYPD.tolist(),
-		    DOB=unstacked.DOB.tolist(),
-		    HPD=unstacked.HPD.tolist(),
-			DSNY=unstacked.DSNY.tolist(),
-			FDNY=unstacked.FDNY.tolist(),
-			DOT=unstacked.DOT.tolist(),
-			DEP=unstacked.DEP.tolist(),
-			DPR=unstacked.DPR.tolist()
-		))
-	'''
     #x = np.array(x, dtype=np.datetime64)
     #month = x[0] - np.timedelta64(30,'D')
     #x=x[x>=month]
@@ -159,20 +138,22 @@ def graph():
 	title = boro.upper() +' 311 calls  from '+startdate+' to '+enddate#routed to '+agency+'
 	defaults.plot_width = 450
 	defaults.plot_height = 400
-	p = figure(x_axis_type="datetime",plot_width=800, plot_height=600, title=title)# title=title)
-	p.grid.grid_line_alpha = 0.5
-	p.xaxis.axis_label = 'Date (m-d)'
-	p.yaxis.axis_label = 'Number of calls per day'
-	p.ygrid.band_fill_color = "olive"
-	p.ygrid.band_fill_alpha = 0.1
+	#p = figure(x_axis_type="datetime",plot_width=800, plot_height=600, title=title)# title=title)
+	#p.grid.grid_line_alpha = 0.5
+	#p.xaxis.axis_label = 'Date (m-d)'
+	#p.yaxis.axis_label = 'Number of calls per day'
+	#p.ygrid.band_fill_color = "olive"
+	#p.ygrid.band_fill_alpha = 0.1
 	#p.line(x, y, color='navy')
 	#p.circle(x, y, color='navy')
 	#p = TimeSeries(xyvalues, x_mapper_type='datetime', xlabel='Date', legend=True, title=title, ylabel='Number of calls per day')
+	#'''
 	scatter = []
 	for k,v in unstacked.items():#columns.items():#range(len(agencies)):
 		if verbose>0: print(k)#agencies[i])
 		if k in agencyList:#!= 'Date':
 			scatter.append(Scatter(unstacked, x='Date', y=k, color=agencydict[k]))#xyvalues
+	#'''
 	'''
 	for index, row in df.iterrows():
 		print('.', end="")

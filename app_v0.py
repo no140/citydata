@@ -1,21 +1,50 @@
 #!/usr/bin/env python3
-
+from flask import Flask, render_template, request, redirect
 import pandas as pd
 import numpy as np
 
 from shapely.geometry import Point, shape
 import json
 import multiprocessing
+import gevent
 
 from ediblepickle import checkpoint
 import os
-import urllib#2
+import urllib	#for python3, remove '2' and add .parse before quote
+import datetime
 import requests
+from bokeh.plotting import figure, output_file, show
+from bokeh.charts import TimeSeries, Scatter, defaults
+from bokeh.layouts import gridplot
+from bokeh.embed import components 
+
+app = Flask(__name__)
+
+@app.route('/')
+def main():
+  return redirect('/index')
+
+@app.route('/index')
+def index():
+  return render_template('index.html')
+
+@app.route('/map')
+def hoodmap():
+  return render_template('map.html')
+
+@app.route('/temp')
+def temp():
+  return render_template('temp.html')
+
+@app.route('/bokeh')
+def bokeh():
+  return render_template('bokeh.html')
 
 verbose = 0
 
 url = 'https://data.cityofnewyork.us/resource/fhrw-4uyv.json'
 url3 = 'https://data.cityofnewyork.us/resource/fhrw-4uyv.json?city=NEW YORK&$limit=3000&$where=agency in("DEP","DOB","DOT","HPD","NYPD","DSNY","FDNY","DPR")'
+'''
 url_2010 = 'https://data.cityofnewyork.us/resource/mwbr-9zz9.json'
 url_2011 = 'https://data.cityofnewyork.us/resource/knik-dax9.json'
 url_2012 = 'https://data.cityofnewyork.us/resource/6nxj-n6t5.json'
@@ -28,54 +57,135 @@ url_2007 = 'https://data.cityofnewyork.us/resource/bjsb-smxa.json'
 url_2006 = 'https://data.cityofnewyork.us/resource/txvy-sgqz.json'
 url_2005 = 'https://data.cityofnewyork.us/resource/xk2u-49gx.json'
 url_2004 = 'https://data.cityofnewyork.us/resource/fred-eu2a.json'
+'''
 url_census = 'https://data.cityofnewyork.us/resource/w5g7-dwbx.json'
 
-cache_dir = 'cache'
-if not os.path.exists(cache_dir):
-    os.mkdir(cache_dir)
+@app.route('/graph', methods = ['POST'])
+def graph():
+	boro = request.form['boro']
+	print("The requested borough is '" + boro.upper() + "'")
 
-@checkpoint(key=lambda args, kwargs: urllib.parse.quote(args[0]) + '_' + str(args[1]) + '.p', work_dir=cache_dir)#, refresh=True)
-def get_data(city, rows, where):
-    params = { #'format'        :'json', 
-               '$limit':         rows, 
-               'city' :          city,
-                '$where' :         where}
-    print('making API request...')
-    result = requests.get(url, params=params)
-    print('API request complete.')
-    return result
+	cache_dir = 'cache'
+	if not os.path.exists(cache_dir):
+	    os.mkdir(cache_dir)
 
-city = 'NEW YORK'
-calls = 50000#100000
-agencies = ("DEP","DOB","DOT","HPD","NYPD","DSNY","FDNY","DPR", "DOHMH","DHS")
+	@checkpoint(key=lambda args, kwargs: urllib.parse.quote(args[0]) + '_' + str(args[1]) + '.p', work_dir=cache_dir)#, refresh=True)  #.parse
+	def get_data(city, rows, where):
+	    params = { #'format'        :'json', 
+		       '$order':		 'created_date',
+				'$limit':         rows, 
+				#'$where' :		 'created_date between 2016-01-01T00:00:00 and 2016-10-01T00:00:00', #"created_date in('2016')",
+				'$select':		'created_date,closed_date,agency,incident_zip,complaint_type,descriptor,latitude,longitude',
+		       'city' :          city,
+		        '$where' :         where}
+	    print('making API request...')
+	    result = requests.get(url, params=params)
+	    print('API request complete.')
+	    return result
+	
+	if boro.lower() == 'manhattan':# or 'nyc':
+		city = 'NEW YORK'
+	else:
+		city = boro.upper()
 
-agencyList = ','.join('"%s"' % x for x in agencies)
+	calls = 100000#100000
+	agencies = ("DEP","DOB","DOT","HPD","NYPD","DSNY","FDNY","DPR")#, "DOHMH")#,"DHS")
 
-r = get_data(city,calls,'agency in('+agencyList+')')
+	agencyList = ','.join('"%s"' % x for x in agencies)
+	print(agencyList)
+	print('getting data from '+city)
+	r = get_data(city,calls,'agency in('+agencyList+')')
 
-df = pd.read_json(r.text, convert_dates=True)
-if verbose>1: print(df.head());print(len(df));print(df.columns.tolist())
-#clean up database
-collist = ['created_date', 'closed_date','agency', 'incident_zip','complaint_type','descriptor', 'latitude', 'longitude']
-newcols = ['created', 'closed', 'agency','zip', 'complaint', 'description','lat', 'long']
-df = df[collist]
-#rename cols
-df.rename(columns=dict(zip(collist, newcols)), inplace=True)
-#print(df.columns[0])
-df = df.dropna()
-if verbose>1: print(df.head(5))
-
-import datetime
-startdate = df.created.iloc[0]
-#print(startdate.year, startdate.month, startdate.day)
-startdate = datetime.datetime.strptime(startdate, '%Y-%m-%dT%H:%M:%S.%f')
-if verbose>0: print('%d-%d-%d' % (startdate.month, startdate.day, startdate.year))
-startdate = str(startdate.month)+'/'+str(startdate.day)+'/'+str(startdate.year)
-enddate = df['created'].iloc[-1]
-enddate = datetime.datetime.strptime(enddate, '%Y-%m-%dT%H:%M:%S.%f')
-enddate = str(enddate.month)+'/'+str(enddate.day)+'/'+str(enddate.year)
-if verbose>0: print(enddate); print(max(df.created)); print(min(df.created))
-
+	df = pd.read_json(r.text, convert_dates=True)
+	if verbose>1: print(df.head());print(len(df));print(df.columns.tolist())
+	#clean up database
+	collist = ['created_date', 'closed_date','agency', 'incident_zip','complaint_type','descriptor', 'latitude', 'longitude']
+	newcols = ['created', 'closed', 'agency','zip', 'complaint', 'description','lat', 'long']
+	df = df[collist]
+	#rename cols
+	df.rename(columns=dict(zip(collist, newcols)), inplace=True)
+	#print(df.columns[0])
+	df = df.dropna()
+	if verbose>1: print(df.head(5))
+	
+	agencydict = {"DEP": 'cyan',"DOB": 'red',"DOT": 'blue',"HPD": 'yellow',"NYPD": 'black',"DSNY": 'magenta',"FDNY": 'orange',"DPR": 'green', "DOHMH": 'gray', "DHS": 'gray'}
+	
+	startdate = df.created.iloc[0]
+	#print(startdate.year, startdate.month, startdate.day)
+	startdate = datetime.datetime.strptime(startdate, '%Y-%m-%dT%H:%M:%S.%f')
+	if verbose>0: print('%d-%d-%d' % (startdate.month, startdate.day, startdate.year))
+	startdate = str(startdate.month)+'/'+str(startdate.day)+'/'+str(startdate.year)
+	enddate = df['created'].iloc[-1]
+	enddate = datetime.datetime.strptime(enddate, '%Y-%m-%dT%H:%M:%S.%f')
+	enddate = str(enddate.month)+'/'+str(enddate.day)+'/'+str(enddate.year)
+	#if verbose>0: print(enddate); print(max(df.created)); print(min(df.created))
+	print(startdate, enddate)
+	
+	#y = df['lat'].tolist()
+	#print(y)
+	#x = df['long'].tolist()
+	#agency="NYPD"
+	#agdf = df[df['agency']==agency]
+	df['created'] = pd.to_datetime(df.created, infer_datetime_format=True, errors='coerce')
+	df['created'] = df.created.dt.date
+	countdf = df[['created','agency',]].groupby(['created','agency'], as_index=False).size()
+	unstacked = countdf.unstack(level=-1, fill_value=0)
+	if verbose>0: print(unstacked)
+	#x = agdf['created'].tolist()
+	#y = agdf['agency'].tolist()
+	#columns = dict()
+	unstacked['Date']=[datetime.datetime.combine(d, datetime.datetime.min.time()) for d in unstacked.index.tolist()]#columns['Date']
+	#for col in unstacked.columns.tolist():
+		#columns[col]=unstacked[col].tolist()
+	#xyvalues = pd.DataFrame(columns)
+	'''
+	xyvalues = pd.DataFrame(dict(
+		    Date=[datetime.datetime.combine(d, datetime.datetime.min.time()) for d in unstacked.index.tolist()],
+			NYPD=unstacked.NYPD.tolist(),
+		    DOB=unstacked.DOB.tolist(),
+		    HPD=unstacked.HPD.tolist(),
+			DSNY=unstacked.DSNY.tolist(),
+			FDNY=unstacked.FDNY.tolist(),
+			DOT=unstacked.DOT.tolist(),
+			DEP=unstacked.DEP.tolist(),
+			DPR=unstacked.DPR.tolist()
+		))
+	'''
+    #x = np.array(x, dtype=np.datetime64)
+    #month = x[0] - np.timedelta64(30,'D')
+    #x=x[x>=month]
+    #y=y[0:len(x)]
+	print('starting to graph')
+	title = boro.upper() +' 311 calls  from '+startdate+' to '+enddate#routed to '+agency+'
+	defaults.plot_width = 450
+	defaults.plot_height = 400
+	p = figure(x_axis_type="datetime",plot_width=800, plot_height=600, title=title)# title=title)
+	p.grid.grid_line_alpha = 0.5
+	p.xaxis.axis_label = 'Date (m-d)'
+	p.yaxis.axis_label = 'Number of calls per day'
+	p.ygrid.band_fill_color = "olive"
+	p.ygrid.band_fill_alpha = 0.1
+	#p.line(x, y, color='navy')
+	#p.circle(x, y, color='navy')
+	#p = TimeSeries(xyvalues, x_mapper_type='datetime', xlabel='Date', legend=True, title=title, ylabel='Number of calls per day')
+	scatter = []
+	for k,v in unstacked.items():#columns.items():#range(len(agencies)):
+		if verbose>0: print(k)#agencies[i])
+		if k in agencyList:#!= 'Date':
+			scatter.append(Scatter(unstacked, x='Date', y=k, color=agencydict[k]))#xyvalues
+	'''
+	for index, row in df.iterrows():
+		print('.', end="")
+		p.scatter(row['long'],row['lat'],fill_color=agencydict[row['agency']], line_width=0.0)#, legend="bottom_right")
+	'''
+	print('starting to render')
+	g = gridplot([s for s in scatter], ncols=4, title=title)
+	script, div = components(g)
+	return render_template('graph.html', script=script, div=div)
+	#output_file('templates/gridplots.html', title=title)
+	#show(g)
+	#return render_template('gridplots.html')
+'''
 #---------------------population data from census database
 pdata = requests.get(url_census)
 pdf = pd.read_json(pdata.text)
@@ -89,7 +199,7 @@ if verbose>0: print(pdf.head(15))
 pX = pdf.as_matrix()
 
 #---------------------load GeoJSON file containing neighborhood polygons
-with open('templates/nynta.geojson', 'r') as f:
+with open('static/nynta.geojson', 'r') as f:
     js = json.load(f)
 polygons = {}
 for feature in js['features']:
@@ -98,7 +208,7 @@ for feature in js['features']:
 	
 #print(polygons.items())
 def which_neighb(latlong):
-	'''Outputs NY neighborhood name given (lat,long).'''
+	''''''Outputs NY neighborhood name given (lat,long).''''''
 	
 	# construct point based on lat/long returned by the geocoder geocoder
 	#print('about to convert to point...')
@@ -217,7 +327,7 @@ dX = ddf4.as_matrix()
 
 #-----------------------insert calcs into geojson
 import pygeoj
-nf = pygeoj.load("templates/nynta.geojson")
+nf = pygeoj.load("static/nynta.geojson")
 for i,feature in enumerate(nf):
 	count = 1
 	notFound = 1
@@ -256,8 +366,11 @@ for i,feature in enumerate(nf):
 			#print('deleting feature...')
 			#feature.properties["ag1"] = " "
 			#del nf[i]
-nf.save('templates/nynta_var.geojson')
+nf.save('static/nynta_var.geojson')
 os.system('echo "var myGeo = $(cat templates/nynta_var.geojson)" > templates/nynta_var.geojson')
+'''
 
+if __name__ == '__main__':
+  app.run(port=33507)#localhost=33507)
 #----------------------------------------------------------------------------------
 

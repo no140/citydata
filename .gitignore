@@ -1,7 +1,9 @@
 venv
 cache
+old
 *.p
 *.pyc
+*.*~
 staticfiles
 .env
 db.sqlite3

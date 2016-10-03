@@ -40,7 +40,7 @@ def temp():
 def bokeh():
   return render_template('bokeh.html')
 
-verbose = 1
+verbose = 0
 
 url = 'https://data.cityofnewyork.us/resource/fhrw-4uyv.json'
 url3 = 'https://data.cityofnewyork.us/resource/fhrw-4uyv.json?city=NEW YORK&$limit=3000&$where=agency in("DEP","DOB","DOT","HPD","NYPD","DSNY","FDNY","DPR")'
@@ -69,7 +69,7 @@ def graph():
 	if not os.path.exists(cache_dir):
 	    os.mkdir(cache_dir)
 
-	@checkpoint(key=lambda args, kwargs: urllib.parse.quote(args[0]) + '_' + str(args[1]) + '.p', work_dir=cache_dir, refresh=True)  #.parse
+	@checkpoint(key=lambda args, kwargs: urllib.parse.quote(args[0]) + '_' + str(args[1]) + '.p', work_dir=cache_dir)#, refresh=True)  #.parse
 	def get_data(city, rows, where):
 	    params = { #'format'        :'json', 
 		       '$order':		 'created_date',
