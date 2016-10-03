@@ -146,7 +146,7 @@ def graph():
 	p.ygrid.band_fill_alpha = 0.1
 	for k,v in unstacked.items():
 		if k in agencyList:
-			p.line(x=unstacked['Date'].tolist(), y=unstacked[k].tolist(), color=agencydict[k], legend=True)	
+			p.line(x=unstacked['Date'].tolist(), y=unstacked[k].tolist(), color=agencydict[k], legend=k)	
 	#p.line(x, y, color='navy')
 	#p.circle(x, y, color='navy')
 	#p = TimeSeries(unstacked, x_mapper_type='datetime', xlabel='Date', legend=True, title=title, ylabel='Number of calls per day')

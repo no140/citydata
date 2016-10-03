@@ -8,9 +8,9 @@ import json
 import multiprocessing
 import gevent
 
-from ediblepickle import checkpoint
+#from ediblepickle import checkpoint
 import os
-import urllib	#for python3, remove '2' and add .parse before quote
+#import urllib	#for python3, remove '2' and add .parse before quote
 import datetime
 import requests
 from bokeh.plotting import figure, output_file, show
@@ -64,7 +64,7 @@ url_census = 'https://data.cityofnewyork.us/resource/w5g7-dwbx.json'
 def graph():
 	boro = request.form['boro']
 	print("The requested borough is '" + boro.upper() + "'")
-	#'''
+	'''
 	cache_dir = 'cache'
 	if not os.path.exists(cache_dir):
 	    os.mkdir(cache_dir)
