@@ -64,6 +64,7 @@ url_census = 'https://data.cityofnewyork.us/resource/w5g7-dwbx.json'
 def graph():
 	boro = request.form['boro']
 	print("The requested borough is '" + boro.upper() + "'")
+	plot = request.form['plot']
 	'''
 	cache_dir = 'cache'
 	if not os.path.exists(cache_dir):
@@ -74,7 +75,7 @@ def graph():
 	    params = { #'format'        :'json', 
 		       '$order':		 'created_date',
 				'$limit':         rows, 
-				#'$where' :		 'created_date between 2016-01-01T00:00:00 and 2016-10-01T00:00:00', #"created_date in('2016')",
+				'$where' :		 'created_date between \'2016-01-01T00:00:00\' and 2016-10-01T00:00:00', #"created_date in('2016')",
 				'$select':		'created_date,closed_date,agency,incident_zip,complaint_type,descriptor,latitude,longitude',
 		       'city' :          city,
 		        '$where' :         where}
@@ -138,37 +139,40 @@ def graph():
 	title = boro.upper() +' 311 calls  from '+startdate+' to '+enddate#routed to '+agency+'
 	defaults.plot_width = 450
 	defaults.plot_height = 400
-	p = figure(x_axis_type="datetime",plot_width=800, plot_height=600, title=title)# title=title)
-	p.grid.grid_line_alpha = 0.5
-	p.xaxis.axis_label = 'Date (m-d)'
-	p.yaxis.axis_label = 'Number of calls per day'
-	p.ygrid.band_fill_color = "olive"
-	p.ygrid.band_fill_alpha = 0.1
-	for k,v in unstacked.items():
-		if k in agencyList:
-			p.line(x=unstacked['Date'].tolist(), y=unstacked[k].tolist(), color=agencydict[k], legend=k)	
-	#p.line(x, y, color='navy')
-	#p.circle(x, y, color='navy')
-	#p = TimeSeries(unstacked, x_mapper_type='datetime', xlabel='Date', legend=True, title=title, ylabel='Number of calls per day')
-	'''
-	scatter = []
-	for k,v in unstacked.items():#columns.items():#range(len(agencies)):
-		if verbose>0: print(k)#agencies[i])
-		if k in agencyList:#!= 'Date':
-			scatter.append(Scatter(unstacked, x='Date', y=k, color=agencydict[k]))#xyvalues
-	'''
-	'''
-	for index, row in df.iterrows():
-		print('.', end="")
-		p.scatter(row['long'],row['lat'],fill_color=agencydict[row['agency']], line_width=0.0)#, legend="bottom_right")
-	'''
-	print('starting to render')
-	#g = gridplot([s for s in scatter], ncols=4, title=title)
-	script, div = components(p)#g)
-	return render_template('graph.html', script=script, div=div)
-	#output_file('templates/gridplots.html', title=title)
-	#show(g)
-	#return render_template('gridplots.html')
+	if plot == 'multi':
+		p = figure(x_axis_type="datetime",plot_width=1000, plot_height=800, title=title)# title=title)
+		p.grid.grid_line_alpha = 0.5
+		p.xaxis.axis_label = 'Date (m-d)'
+		p.yaxis.axis_label = 'Number of calls per day'
+		p.ygrid.band_fill_color = "olive"
+		p.ygrid.band_fill_alpha = 0.1
+		for k,v in unstacked.items():
+			if k in agencyList:
+				p.line(x=unstacked['Date'].tolist(), y=unstacked[k].tolist(), color=agencydict[k], legend=k)	
+		#p.line(x, y, color='navy')
+		#p.circle(x, y, color='navy')
+		#p = TimeSeries(unstacked, x_mapper_type='datetime', xlabel='Date', legend=True, title=title, ylabel='Number of calls per day')
+		script, div = components(p)
+		return render_template('graph.html', script=script, div=div)
+
+	elif plot == 'grid':
+		scatter = []
+		for k,v in unstacked.items():#columns.items():#range(len(agencies)):
+			if verbose>0: print(k)#agencies[i])
+			if k in agencyList:#!= 'Date':
+				scatter.append(Scatter(unstacked, x='Date', y=k, color=agencydict[k]))#xyvalues
+		'''
+		for index, row in df.iterrows():
+			print('.', end="")
+			p.scatter(row['long'],row['lat'],fill_color=agencydict[row['agency']], line_width=0.0)#, legend="bottom_right")
+		'''
+		print('starting to render')
+		g = gridplot([s for s in scatter], ncols=4, title=title)
+		script, div = components(g)
+		return render_template('graph.html', script=script, div=div)
+		#output_file('templates/gridplots.html', title=title)
+		#show(g)
+		#return render_template('gridplots.html')
 '''
 #---------------------population data from census database
 pdata = requests.get(url_census)
