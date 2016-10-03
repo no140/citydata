@@ -8,9 +8,9 @@ import json
 import multiprocessing
 import gevent
 
-from ediblepickle import checkpoint
+#from ediblepickle import checkpoint
 import os
-import urllib	#for python3, remove '2' and add .parse before quote
+#import urllib	#for python3, remove '2' and add .parse before quote
 import datetime
 import requests
 from bokeh.plotting import figure, output_file, show
@@ -64,12 +64,12 @@ url_census = 'https://data.cityofnewyork.us/resource/w5g7-dwbx.json'
 def graph():
 	boro = request.form['boro']
 	print("The requested borough is '" + boro.upper() + "'")
-
+	'''
 	cache_dir = 'cache'
 	if not os.path.exists(cache_dir):
 	    os.mkdir(cache_dir)
 
-	@checkpoint(key=lambda args, kwargs: urllib.parse.quote(args[0]) + '_' + str(args[1]) + '.p', work_dir=cache_dir)#, refresh=True)  #.parse
+	@checkpoint(key=lambda args, kwargs: urllib.parse.quote(args[0]) + '_' + str(args[1]) + '.p', work_dir=cache_dir)#, refresh=True)  #.parse'''
 	def get_data(city, rows, where):
 	    params = { #'format'        :'json', 
 		       '$order':		 'created_date',
@@ -88,7 +88,7 @@ def graph():
 	else:
 		city = boro.upper()
 
-	calls = 100000#100000
+	calls = 50000#100000
 	agencies = ("DEP","DOB","DOT","HPD","NYPD","DSNY","FDNY","DPR")#, "DOHMH")#,"DHS")
 
 	agencyList = ','.join('"%s"' % x for x in agencies)
