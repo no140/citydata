@@ -1,0 +1,92 @@
+//under CONSTRUCTION
+//previous version "v0" with matplotlib plots, no web/Flask, is located one directory level above this new "version" which is now inside 'src' folder (local)
+
+I would like to analyze city data by asking urbanologist questions for the benefit of the city planner, dweller, and investor.  Data from various sources, for instance 311 complaints, DOB records, and Yelp, can be brought together to paint a bigger picture of what is actually occurring on the streets and inside buildings.
+To start, I have begun to look at 311 complaints - in particular the response times of those complaints broken down by city agency (each 311 complaint is assigned to a responsible agency) and by zip code.  I wanted to see if particular areas of the city received faster or slower service than other areas.  Does the Dept of Sanitation respond to complaints in the LES as fast as in the UES?  Does the DOT fix infrastructure uptown as fast as downtown?  Do street noise or opened fire hydrants indicate a need for more parks or social gathering areas in a neighborhood, or is it related to problems within residential buildings? Does the HPD need more funding to allocate resources in particular neighborhoods, or should your local community board focus on more pressing topics?
+Besides asking the right questions and organizing the data in such a way to visualize or quantify answers, data can be analyzed to see trends and project economic and/or social movement in real estate areas.  For instance, can we find markers that indicate gentrification from city data, and use these to predict future neighborhood transformations, or even better, to find fair ways to plan for and mitigate problems within the social and economic transformation as to protect all people involved?  
+This project is in a very preliminary stage and has room to shift in different directions and formulate further questions as more data is researched and time is spent analyzing not only the data but also the database 'market'.
+-----------------------------------------
+"paint a bigger picture, of nyc neighborhoods, historical trends, and present state"
+
+gentrification is starting to occur in my immediate neighborhood right now, having been spared for a long time (Inwood and West side of Bway instead, and stragglers being so isolated that they eventually move to Brooklyn to be with their friends) -- L train issue in Bk getting hipsters to move to Crown Hts, and now Wash Hts is an option -- see the change happen seemingly overnight.
+-historical info would help, for known gentrified areas such as hipster willyburg and charlem...
+-other databases: yelp, property value data, rental data, income data, race, etc.
+-effect of projects/hpd housing, halfway/rooming houses (city agency installments, partly infrastructural), train station locations, park access, (infrastructure)
+
+street light exposed wiring still not fixed, despite 311 complaint
+-311 complaints 'closed' even when not truly fixed, for ex. dpr complaint dismissed because trash in park 'was not a big deal, looks clean to me' here in 191st Highbridge park.
+-fordham plaza, for ex, or bench installed on 181st p.o., immediately trashed and bummy.
+-who is calling in complaints, indifference in neighborhood coming from city agency, ppl within, or reactions on both sides to the other?
+
+119th st Harlem ~2000 all crackhouses. Asked the police, response was 'it's just not a priority right now'
+
+can we see effect on far rockaway post-sandy/post-governmental help
+how does zoning, infrastructure, gov't regulation (subsidized housing, etc) play a role for the neighborhood
+how does population changes affect...
+
+*analysis:
+-clustering of neighborhoods, not by location, but by other characteristics instead?
+	-probability matrices...
+	-areas to go for certain 'vibe', influenced by ppl, businesses, infrastrucure...(ex/clinton hill)
+-trending, movement > can we see trends, link characteristics, influences, predict change?\
+
+
+---------------------------------------------
+::Columns Utilized::
+'Created Date' : indicates occurrence
+'time' = Closed - Created : indicates response time
+*dismissed or closed complaints that were not actually resolved...
+*jobs missing from database, eg. streetlamp
+'Incident Zip' : 
+'Agency':
+Latitude, Longitude : to create maps
+----------------------------------------------
+::Plots::
+311_ny_count_time.py
+	takes in year's data
+	plots line plot of response times & scatter plot of #occurences of 8 agencies in colors per zip
+
+311_ny_map_yearly.py
+	takes in year's data
+	plots scatter plot of 8 agencies in colors into map of manhattan
+	- yearly_agency version as well
+
+*HPD occurrences ~14,0000 level for all years except 2012, while next NYPD ~2-4000's
+*FDNY missing from 2010 data?
+	
+311_ny.py
+	takes in # rows of data
+	plots scatter of response times per zip code
+
+figure of 8 plots, 1 of each agency like 'campbell soups'...?
+figure of 6 plots, 1 for each year since 2010 over time...?
+
+-> analyze numbers
+ - do higher # occurrences -> longer response times
+ - have # occurrences increased/decreased over time? due to population? due to more 311 participation?
+ - which #s correspond to infrastructure (hpd housing, transit, business types (for instance nightlife), dep/sanitation for residential/commercial, etc)
+	 - which can be answered from 311 data alone?  markers?
+ - neighborhood clustering by features. trending by numbers.
+	>topics of concern + trending tweets for neighborhood?
+
+-------
+TODO:
+-------
+- heroku-type app to user-input agency and boro > graph or map (carto)?
+	> made leaflet.js map, can load different tiles (zips, hoods, precincts, communities...)
+	<  
+ 
+
+APPLICATION:
+------------
+database pull: agency, area, time period/trend
+database pull: zoning, prop values, census (populations), transit
+database pull: yelp (business), real estate (market), etc
+"	"	trending tweets, geotags, etc...
+
+inputs:
+
+outputs:
+
+plot output: graph
+plot output: map
