@@ -16,7 +16,12 @@ import requests
 from bokeh.plotting import figure, output_file, show
 from bokeh.charts import TimeSeries, Scatter, defaults
 from bokeh.layouts import gridplot
-from bokeh.embed import components 
+from bokeh.embed import components
+from bokeh.palettes import Spectral6
+from bokeh.layouts import layout, widgetbox
+from bokeh.models import ColumnDataSource, HoverTool, Div
+from bokeh.models.widgets import Slider
+from bokeh.io import curdoc
 
 app = Flask(__name__)
 
@@ -92,7 +97,7 @@ def graph():
 	else:
 		city = boro.upper()
 
-	calls = 50000#100000
+	calls = 100000#100000
 	agencies = ("DEP","DOB","DOT","HPD","NYPD","DSNY","FDNY","DPR")#, "DOHMH")#,"DHS")
 
 	agencyList = ','.join('"%s"' % x for x in agencies)
@@ -176,6 +181,67 @@ def graph():
 		#output_file('templates/gridplots.html', title=title)
 		#show(g)
 		#return render_template('gridplots.html')
+	#'''
+	elif plot == 'pockets':
+		desc = Div(text=open(join(dirname(__file__), "pockets.html")).read(), width=800)
+		slider = Slider(start=0, end=len(df)-1, value=1, step=len(df)/100, title="time period")#, callback=update)
+		
+		# Create Column Data Source that will be used by the plot
+		source = ColumnDataSource(data=dict(x=[], y=[], created=[], agency=[]))#, title=[], year=[], revenue=[], alpha=[]))
+
+		hover = HoverTool(tooltips=[
+			#("Neighborhood", "@hood"),
+			("# calls", "@created"),
+			("Agency", "@agency")
+		])
+		TOOLS = "pan, box_zoom, wheel_zoom, reset, save, hover"
+		p = figure(plot_height=600, plot_width=700, title="", toolbar_location=None, tools=[hover])
+		p.circle(x="x", y="y", source=source, size=7, color="color", line_color=None, fill_alpha="alpha")
+		def update(start=0):#, end=len(df), col='Close'):
+			startdate = df.created[start]
+			#startdate = datetime.datetime.strptime(startdate, '%Y-%m-%dT%H:%M:%S.%f')
+			enddate = startdate + relativedelta(months=1)
+			if enddate < max(df.created):
+				endpt = df[df.created >= enddate].index[0]
+			else: 
+				endpt = df.index[-1]
+				enddate = df.created[endpt]
+			ending = str(enddate.month)+'/'+str(enddate.day)+'/'+str(enddate.year)
+			starting = str(startdate.month)+'/'+str(startdate.day)+'/'+str(startdate.year)
+			#plot = figure(tools=TOOLS, title='problematic areas between '+starting+' and '+ending)#, x_axis_label="date", x_axis_type="datetime")
+			p.title.text = 'problematic areas between '+starting+' and '+ending
+			pockets = df[start:endpt].groupby(['lat','long']).agg({'created': 'count', 'agency': lambda x: ', '.join(x)})
+			thresh = 2*(endpt-start)/1000#2*len(pockets)/1000
+			#print(start, endpt, len(pockets), thresh)
+			source.data = dict(
+					x=[y for x,y in pockets[pockets.created>thresh].index],
+					y=[x for x,y in pockets[pockets.created>thresh].index],
+					created = pockets[pockets.created>thresh].created,
+					agency = pockets[pockets.created>thresh].agency
+			)
+			#plot.scatter(x, y)
+			#show(plot)
+
+		
+		#show(widgetbox(slider))		
+		#interact(update, start=(0,len(df)-1))#, end=(1,len(df)),col=('Open','Close'))
+		#script,div = components({"p": p, "slider": vform(slider)})
+		#return render_template('pocket.html', script=script, div=div)
+		controls = [slider]#reviews, boxoffice, genre, min_year, max_year, oscars, director, cast, x_axis, y_axis]
+		for control in controls:
+			control.on_change('value', lambda attr, old, new: update())
+
+		sizing_mode = 'fixed'  # 'scale_width' also looks nice with this example
+		inputs = widgetbox(*controls, sizing_mode=sizing_mode)
+		l = layout([
+			[desc],
+			[inputs, p],
+		], sizing_mode=sizing_mode)
+
+		update()  # initial load of the data
+		curdoc().add_root(l)
+		curdoc().title = "311 Data"
+	#'''
 '''
 #---------------------population data from census database
 pdata = requests.get(url_census)

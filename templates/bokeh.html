@@ -1,10 +1,9 @@
 
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
+{% extends "base.html" %}
+{% block title %}
         <title>Bokeh Plot</title>
-        
+{% endblock %}
+{% block head %}
 <link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.2.min.css" type="text/css" />
         
 <script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.2.min.js"></script>
@@ -22,8 +21,9 @@
             margin: auto;
           }
         </style>
-    </head>
-    <body>
+{% endblock %}
+
+{% block content %}
         
         <div class="bk-root">
             <div class="plotdiv" id="c02094d2-00d8-4006-b1aa-d48049c8f09f"></div>
@@ -39,5 +39,4 @@
             });
         });
         </script>
-    </body>
-</html>
+{% endblock %}

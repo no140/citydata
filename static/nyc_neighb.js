@@ -12,10 +12,10 @@ mymap.scrollWheelZoom.disable();
 function getColor(d) {
     return d == "DOT" ? '#3182bd' :
 	   d == "DEP"  ? '#1c9099' :
-	   d == "DOB"  ? '#8856a7' ://'#de2d26' :
-	   d == "HPD"  ? '#f03b20' :
+	   d == "DOB"  ? '#f03b20' ://'#de2d26' :
+	   d == "HPD"  ? '#e6550d' :
 	   d == "NYPD"   ? '#636363' :
-	   d == "FDNY"   ? '#e6550d' :
+	   d == "FDNY"   ? '#efde1f' :
 	   d == "DSNY"   ? '#c51b8a' :
 	   d == "DPR"   ? '#2ca25f' :
 		      '#FFEDA0';

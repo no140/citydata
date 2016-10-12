@@ -16,7 +16,10 @@ import requests
 from bokeh.plotting import figure, output_file, show
 from bokeh.charts import TimeSeries, Scatter, defaults
 from bokeh.layouts import gridplot
-from bokeh.embed import components 
+from bokeh.embed import components
+from bokeh.palettes import Spectral6
+from bokeh.layouts import widgetbox
+from bokeh.models.widgets import Slider
 
 app = Flask(__name__)
 
@@ -29,7 +32,7 @@ def index():
   return render_template('index.html')
 
 @app.route('/map')
-def hoodmap():
+def map():
   return render_template('map.html')
 
 @app.route('/temp')
@@ -176,6 +179,32 @@ def graph():
 		#output_file('templates/gridplots.html', title=title)
 		#show(g)
 		#return render_template('gridplots.html')
+	#'''
+	elif plot == 'pockets':
+		TOOLS = "pan, box_zoom, wheel_zoom, reset, save, hover"
+		def update(start=0):#, end=len(df), col='Close'):
+			startdate = df.created[start]
+			#startdate = datetime.datetime.strptime(startdate, '%Y-%m-%dT%H:%M:%S.%f')
+			enddate = startdate + relativedelta(months=1)
+			if enddate < max(df.created):
+				endpt = df[df.created >= enddate].index[0]
+			else: 
+				endpt = df.index[-1]
+				enddate = df.created[endpt]
+			ending = str(enddate.month)+'/'+str(enddate.day)+'/'+str(enddate.year)
+			starting = str(startdate.month)+'/'+str(startdate.day)+'/'+str(startdate.year)
+			plot = figure(tools=TOOLS, title='problematic areas between '+starting+' and '+ending)#, x_axis_label="date", x_axis_type="datetime")
+			pockets = df[start:endpt].groupby(['lat','long']).agg({'created': 'count', 'agency': lambda x: ', '.join(x)})
+			thresh = 2*(endpt-start)/1000#2*len(pockets)/1000
+			print(start, endpt, len(pockets), thresh)
+			plot.scatter([y for x,y in pockets[pockets.created>thresh].index], [x for x,y in pockets[pockets.created>thresh].index])
+			show(plot)
+		slider = Slider(start=0, end=len(df)-1, value=1, step=len(df)/100, title="time period", callback=update)
+		#show(widgetbox(slider))		
+		#interact(update, start=(0,len(df)-1))#, end=(1,len(df)),col=('Open','Close'))
+		script,div = components({"p": p, "slider": vform(slider)})
+		return render_template('pocket.html', script=script, div=div)
+	#'''
 '''
 #---------------------population data from census database
 pdata = requests.get(url_census)

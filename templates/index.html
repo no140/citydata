@@ -1,52 +1,83 @@
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>Borough Input</title>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-		<!--<link rel=stylesheet type=text/css href='/static/style.css'>-->
-	</head>
-	<body>
-		<div class=page>
-  			<h1>User Input</h1>
+{% extends "base.html" %}
+{% block title %}{% endblock %}
+{% block content %}
+
+
+<!-- HTML Form -->
+		<div class=page style="text-align:center">
+  			<h1>Choose the data to be analyzed...</h1>
   			<div class=metanav>
 
-    			<h4>Please enter a borough eg. Manhattan:</h4>
+    			
 
     			<form id='input' method='post' action='/graph'>	
-	  			<p>
-					Borough: <input type='text' name='boro' />
+	  			<p style="text-align:center">
+	  				<div class="container-fluid" style="height:700px">
+	  				<h4>Please enter a borough:</h4>
+	  				<div class="row center-block">
+	  				<div class="col-xs-4 col-xs-offset-4">
+					<input type='text' name='boro' class="form-control input-lg" placeholder="borough" />
+					<span class="help-block">eg. Manhattan, Bronx, Brooklyn, Queens, or Staten Island</span>
+					</div></div>
 					<!--<input type="submit" value="Submit"> -->
-
+					<br>
+					<p>
+					<div class="row center-block">
 					Plot: 
+					<div class="radio">
+					  <label><input type="radio" name="plot" value='multi'>multi-line</label>
+					</div>
+					<div class="radio">
+					  <label><input type="radio" name="plot" value='grid'>gridplots</label>
+					</div>
+					<div class="radio disabled">
+					  <label><input type="radio" name="plot" value='pockets'>pockets</label>
+					</div></div>
+					</p>
+					<!--
 					<select name="plot">
 					<option value="multi">multi-line</option>
 					<option value="grid">gridplots</option>
-				  </select>
-					starting from month:
-					<select name="month">
+					<option value="pockets">problematic pockets</option>
+				  </select> -->
+				  <br>
+				  starting from:
+				  <!-- <div class="form-group"> -->
+					<div class="row center-block">
+				  <div class="col-xs-3 col-centered">
+					<label for="month">month:</label>
+					<select class="form-control" id="month">
+					<!-- <select name="month"> -->
 					<option value="01">01</option>
 					<option value="04">04</option>
 					<option value="07">07</option>
 					<option value="10">10</option>
-				  </select>
-					in year:
-					<select name="year">
+				  </select></div></div>
+				 
+				  <div class="row center-block">
+				  <div class="col-xs-3 col-centered">
+					<label for="year">year: </label>
+					<select class="form-control" id="year">
+					<!-- <select name="year"> -->
+					<option value="2017" disabled>2017</option>
 					<option value="2016">2016</option>
 					<option value="2015">2015</option>
 					<option value="2014">2014</option>
 					<option value="2013">2013</option>
 					<option value="2012">2012</option>
 					<option value="2011">2011</option>
-				  </select>
-				  <input type="submit" value="Submit">
-
+				  </select></div></div>
+				  <br>
+				  <button type="submit" class="btn btn-default">Submit</button>
+				  <!-- <input type="submit" value="Submit"> -->
+				 </div>
 	  			</p>
 				</form>
-
-  			</div>
-		</div>
-	</body>
-</html>
+</div>
+</div>
+				
+		<!-- jQuery library -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<!-- Bootstrap JS -->
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script> 
+{% endblock %}

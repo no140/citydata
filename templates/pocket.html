@@ -1,24 +1,20 @@
-<!--
 <html>
   <head>
-     -->
-
-{% extends "base.html" %}
-{% block title %}{% endblock %}
-
-{% block head %}
     <link rel="stylesheet" href="//cdn.pydata.org/bokeh/release/bokeh-0.12.2.min.css" type="text/css" />
     <script type="text/javascript" src="//cdn.pydata.org/bokeh/release/bokeh-0.12.2.min.js"></script>
-
     {{ script | safe }}
-{% endblock %}
-
-{% block content %}
-  
+  </head>
+  <body>
     <div class=page>
-      <h3 align="center">Generated graph from 311 Data</h3>
+		{% extends "base.html" %}
+		{% block content %}
+      <h1>Generated graph from 311 Data</h1>
       {{ div | safe }}
+		
+		{{ div.p | safe }}
+		{{ div.slider | safe }}
+		{% endblock %}
     </div>
 <a href="/index">go back</a>
-
-{% endblock %}
+  </body>
+</html>
