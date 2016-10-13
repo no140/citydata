@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Borough Input</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+		<!--<link rel=stylesheet type=text/css href='/static/style.css'>-->
+	</head>
+	<body>
+		<div class=page>
+  			<h1>User Input</h1>
+  			<div class=metanav>
+
+    			<h4>Please enter a borough eg. Manhattan:</h4>
+
+    			<form id='input' method='post' action='/graph'>	
+	  			<p>
+					Borough: <input type='text' name='boro' />
+					<!--<input type="submit" value="Submit"> -->
+
+					Plot: 
+					<select name="plot">
+					<option value="multi">multi-line</option>
+					<option value="grid">gridplots</option>
+				  </select>
+					starting from month:
+					<select name="month">
+					<option value="01">01</option>
+					<option value="04">04</option>
+					<option value="07">07</option>
+					<option value="10">10</option>
+				  </select>
+					in year:
+					<select name="year">
+					<option value="2016">2016</option>
+					<option value="2015">2015</option>
+					<option value="2014">2014</option>
+					<option value="2013">2013</option>
+					<option value="2012">2012</option>
+					<option value="2011">2011</option>
+				  </select>
+				  <input type="submit" value="Submit">
+
+	  			</p>
+				</form>
+
+  			</div>
+		</div>
+	</body>
+</html>

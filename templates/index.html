@@ -10,7 +10,7 @@
 
     			
 
-    			<form id='input' method='post' action='/graph'>	
+    			<form id='input' method='post' action='/graph' role='form'>	
 	  			<p style="text-align:center">
 	  				<div class="container-fluid" style="height:700px">
 	  				<h4>Please enter a borough:</h4>
@@ -46,7 +46,7 @@
 					<div class="row center-block">
 				  <div class="col-xs-3 col-centered">
 					<label for="month">month:</label>
-					<select class="form-control" id="month">
+					<select class="form-control" name="month" id="month">
 					<!-- <select name="month"> -->
 					<option value="01">01</option>
 					<option value="04">04</option>
@@ -57,7 +57,7 @@
 				  <div class="row center-block">
 				  <div class="col-xs-3 col-centered">
 					<label for="year">year: </label>
-					<select class="form-control" id="year">
+					<select class="form-control" id="year" name="year">
 					<!-- <select name="year"> -->
 					<option value="2017" disabled>2017</option>
 					<option value="2016">2016</option>

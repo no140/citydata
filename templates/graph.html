@@ -11,14 +11,25 @@
     <script type="text/javascript" src="//cdn.pydata.org/bokeh/release/bokeh-0.12.2.min.js"></script>
 
     {{ script | safe }}
+
 {% endblock %}
 
 {% block content %}
-  
-    <div class=page>
-      <h3 align="center">Generated graph from 311 Data</h3>
+<div class="container" style="float: center">
+      <div>
+      <h3 align="center">graph generated from 311 data</h3>
       {{ div | safe }}
     </div>
 <a href="/index">go back</a>
+</div>
+
+<script>
+.bk-canvas-wrapper {
+    margin: 0 auto;
+}
+div {
+  margin: 0 auto;
+}
+</script>
 
 {% endblock %}

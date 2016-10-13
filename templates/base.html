@@ -97,6 +97,17 @@ body {
     float: none;
 }
 
+#div_center {
+  position: absolute;
+  width: 300px;
+  height: 200px;
+  z-index: 15;
+  top: 50%;
+  left: 50%;
+  margin: -100px 0 0 -150px;
+  background: red;
+}
+
 </style>
 	{% block head %}<!-- open and close together. this will be filled if present in other .html pages -->
 	{% endblock %}
@@ -119,7 +130,7 @@ body {
 	        <li><a href="{{ url_for('map') }}">HOODS</a></li>
 	        <li><a href="{{ url_for('bokeh') }}">TIME</a></li>
 	        <li><a href="{{ url_for('temp') }}">MAP</a></li>
-	        <li><a href="{{ url_for('temp') }}">INSIGHTS</a></li>
+	        <li><a href="{{ url_for('testing') }}">INSIGHTS</a></li>
 	        <li><a href="http://github.com/no140/citydata" target="_blank">CODE</a></li>
 	        <li class="dropdown">
 	          <a class="dropdown-toggle" data-toggle="dropdown" href="#">MORE

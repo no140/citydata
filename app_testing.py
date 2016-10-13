@@ -46,6 +46,10 @@ def index():
 def temp():
   return render_template('temp.html')
 
+@app.route('/testing')
+def testing():
+  return render_template('testing-ml.html')
+
 @app.route('/bokeh')
 def bokeh():
   return render_template('bokeh.html')
@@ -61,7 +65,9 @@ def graph():
 	boro = request.form['boro']
 	print("The requested borough is '" + boro.upper() + "'")
 	plot = request.form['plot']
+	print("The requested plot is '" + plot + "'")
 	aftermonth = request.form['month']
+	print("The requested month is '" + aftermonth + "'")
 	afteryear = request.form['year']
 	afterdate = r"'"+afteryear+'-'+aftermonth+r"-01'"#r"'2016-01-01'"
 	#'''
@@ -138,6 +144,7 @@ def graph():
 	title = boro.upper() +' 311 calls  from '+startdate+' to '+enddate#routed to '+agency+'
 	defaults.plot_width = 450
 	defaults.plot_height = 400
+	
 	if plot == 'multi':
 		p = figure(x_axis_type="datetime",plot_width=1000, plot_height=800, title=title)# title=title)
 		p.grid.grid_line_alpha = 0.5
@@ -236,15 +243,16 @@ def pockets():
 			#hpdf['long'] = latlong['lng']
 		#else: print('no georesponse')
 	'''
-	hpdf = pd.read_csv('hpd.csv')
-	print(hpdf.head())
-	print(len(hpdf))
+	#hpdf = pd.read_csv('hpd.csv')
+	#print(hpdf.head())
+	#print(len(hpdf))
+	
 	#desc = Div(text=open(join(dirname(__file__), "templates/description.html")).read(), width=800)
 	slider = Slider(start=0, end=len(df)-1, value=1, step=len(df)/100, title="time period")#, callback=update)
 	
 	# Create Column Data Source that will be used by the plot
 	source = ColumnDataSource(data=dict(x=[], y=[], created=[], agency=[]))#, title=[], year=[], revenue=[], alpha=[]))
-	hpd_source = ColumnDataSource(data=dict(long=hpdf.long, lat=hpdf.lat))
+	#hpd_source = ColumnDataSource(data=dict(long=hpdf.long, lat=hpdf.lat))
 	hover = HoverTool(tooltips=[
 		#("Neighborhood", "@hood"),
 		("# calls", "@created"),
@@ -290,7 +298,7 @@ def pockets():
 [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"lightness":33}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2e5d4"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#c5dac6"}]},{"featureType":"poi.park","elementType":"labels","stylers":[{"visibility":"on"},{"lightness":20}]},{"featureType":"road","elementType":"all","stylers":[{"lightness":20}]},{"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#c5c6c6"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#e4d7c6"}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#fbfaf7"}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"color":"#acbcc9"}]}]
 """) #do NOT change zoom to 12, map won't load!
 	plot = GMapPlot(
-	    x_range=DataRange1d(), y_range=DataRange1d(), map_options=map_options, plot_width=600, plot_height=750, 
+	    x_range=DataRange1d(), y_range=DataRange1d(), map_options=map_options, plot_width=800, plot_height=750, 
 	    api_key=API_KEY #, tools=TOOLS #title=title, tools=[hover]
 	)
 	#plot = figure(plot_height=600, plot_width=700, title="", toolbar_location=None, tools=[hover])#p
@@ -299,7 +307,7 @@ def pockets():
 	#plot.circle(x="x", y="y", source=source, size=10, line_color=None, fill_color="red")#**options, fill_alpha="alpha")#p
 	circle = Circle(x="x", y="y", size=10, fill_color="red", fill_alpha=0.9, line_color=None)
 	plot.add_glyph(source, circle)
-	plot.add_glyph(hpd_source, Circle(x='long', y='lat', size=6, fill_color="orange", fill_alpha=0.4, line_color=None))
+	#plot.add_glyph(hpd_source, Circle(x='long', y='lat', size=6, fill_color="orange", fill_alpha=0.4, line_color=None))
 	plot.add_tools(pan, wheel_zoom, box_select, hover)#box,zoom, reset don't work...
 	def update(start=0):#, end=len(df), col='Close'):
 		startdate = df.created[start]
@@ -351,7 +359,7 @@ def pockets():
 	curdoc().title = "311 Data"
 	#show(widgetbox(slider))		
 	#interact(update, start=(0,len(df)-1))#, end=(1,len(df)),col=('Open','Close'))
-	script,div = components({"p": plot, "slider": slider})#vform(slider)})
+	script,div = components(plot) #{"p": plot, "slider": slider})#vform(slider)})
 	return render_template('pockets.html', script=script, div=div)
 	#return render_template('pockets.html')
 
