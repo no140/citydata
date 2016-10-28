@@ -15,8 +15,10 @@
 	  				<div class="container-fluid" style="height:700px">
 	  				<h4>Please enter a borough:</h4>
 	  				<div class="row center-block">
-	  				<div class="col-xs-4 col-xs-offset-4">
-					<input type='text' name='boro' class="form-control input-lg" placeholder="borough" />
+	  				<div class="col-xs-4 col-xs-offset-4"> <!-- has-warning has-feedback" -->
+					<input type='text' name='boro' class="form-control input-lg" placeholder="borough" /> <!-- id="inputWarning" aria-describedby="inputWarning"/>
+					<span class="glyphicon glyphicon-warning-sign form-control-feedback" aria-hidden="true"></span>
+					<span id="inputWarning" class="sr-only">(warning)</span>-->
 					<span class="help-block">eg. Manhattan, Bronx, Brooklyn, Queens, or Staten Island</span>
 					</div></div>
 					<!--<input type="submit" value="Submit"> -->

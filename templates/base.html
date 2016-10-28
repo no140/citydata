@@ -130,14 +130,14 @@ body {
 	        <li><a href="{{ url_for('map') }}">HOODS</a></li>
 	        <li><a href="{{ url_for('bokeh') }}">TIME</a></li>
 	        <li><a href="{{ url_for('temp') }}">MAP</a></li>
-	        <li><a href="{{ url_for('testing') }}">INSIGHTS</a></li>
+	        <li><a href="{{ url_for('testing') }}">ANALYSIS</a></li>
 	        <li><a href="http://github.com/no140/citydata" target="_blank">CODE</a></li>
 	        <li class="dropdown">
 	          <a class="dropdown-toggle" data-toggle="dropdown" href="#">MORE
 	          <span class="caret"></span></a>
 	          <ul class="dropdown-menu">
 	            <li><a href="#">Extras</a></li>
-	            <li><a href="#">NYC OpenData</a></li>
+	            <li><a href="https://data.cityofnewyork.us/">NYC OpenData</a></li>
 	            <li><a href="#">and stuff</a></li>
 	          </ul>
 	        </li>
@@ -169,18 +169,18 @@ body {
 	</div>
 	-->
 	{% endblock %}
-	<div class="container page" >
-            <div class="content">
+	<!-- <div class="container page" > -->
+        <div class"container-fluid"> <!-- class="content">-->
 		{% block content %}
 		{% endblock %}
-	    </div>
+	    <!-- </div> -->
             <hr>
             {% block footer %}
             <footer class="footer" style="text-align:center">
 		<p><a href="https://github.com/no140/citydata" target="_blank">About</a> | <a href="https://github.com/no140/citydata/issues/" target="_blank">Issues</a></p>
             </footer>
             {% endblock %}
-	</div>
+		</div>
 	{% block js_footer %}
 <!--
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
