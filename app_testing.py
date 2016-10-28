@@ -144,7 +144,7 @@ def graph():
 	title = boro.upper() +' 311 calls  from '+startdate+' to '+enddate#routed to '+agency+'
 	defaults.plot_width = 450
 	defaults.plot_height = 400
-	
+
 	if plot == 'multi':
 		p = figure(x_axis_type="datetime",plot_width=1000, plot_height=800, title=title)# title=title)
 		p.grid.grid_line_alpha = 0.5
@@ -294,7 +294,9 @@ def pockets():
 		return x,y
 
 	'''
-	map_options = GMapOptions(lat=40.81, lng=-73.94, map_type="roadmap", zoom=13, styles="""
+	maplat = df.lat.mean() #40.81
+	maplong = df.long.mean() #-73.94
+	map_options = GMapOptions(lat=maplat, lng=maplong, map_type="roadmap", zoom=13, styles="""
 [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"lightness":33}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2e5d4"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#c5dac6"}]},{"featureType":"poi.park","elementType":"labels","stylers":[{"visibility":"on"},{"lightness":20}]},{"featureType":"road","elementType":"all","stylers":[{"lightness":20}]},{"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#c5c6c6"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#e4d7c6"}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#fbfaf7"}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"color":"#acbcc9"}]}]
 """) #do NOT change zoom to 12, map won't load!
 	plot = GMapPlot(

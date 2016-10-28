@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{% endblock %}
+
+{% block head %}
+      <!--
+      <script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxcFXE0nGXVmmiIved5w_4Lr1_G4eqZ6M">
+    </script> -->
+
+    <link rel="stylesheet" href="//cdn.pydata.org/bokeh/release/bokeh-0.12.2.min.css" type="text/css" />
+    <link href="//cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.2.min.css" rel="stylesheet">
+    <script type="text/javascript" src="//cdn.pydata.org/bokeh/release/bokeh-0.12.2.min.js"></script>
+    <script type="text/javascript" src="//cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.2.min.js"></script>
+    {{ script | safe }}
+{% endblock %}
+
+    {% block content %}
+    <div class="column_center" style="width:800px; margin:0 auto; display: block"> <!-- style="text-align:center">  id="map"> -->
+      <h2>graph generated from 311 data</h2>
+      {{ div | safe }}		
+      {{ div.p | safe }}
+      {{ div.slider | safe }}
+    </div>
+<a href="/index">go back</a>
+
+    <!--   
+    <script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
+    </script> -->
+{% endblock %}
+

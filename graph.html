@@ -1,0 +1,46 @@
+<!--
+<html>
+  <head>
+     -->
+
+{% extends "base.html" %}
+{% block title %}{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="//cdn.pydata.org/bokeh/release/bokeh-0.12.2.min.css" type="text/css" />
+    <script type="text/javascript" src="//cdn.pydata.org/bokeh/release/bokeh-0.12.2.min.js"></script>
+
+    {{ script | safe }}
+<style>
+          html {
+            width: 100%;
+            height: 100%;
+          }
+          body {
+            width: 100%;
+            height: 100%;
+            margin: auto;
+          }
+          .bk-canvas-wrapper {
+              margin: 0 auto;
+          }
+          div {
+            margin: 0 auto !important;
+}
+        </style>
+{% endblock %}
+
+{% block content %}
+<!--
+<div class="container"  style="width: 100%; margin: 0 auto; "> -->
+<div style="display:table; margin:0 auto;">
+    <!--  <div class="column_center" style="width:1200px; margin: 0 auto; display: block;"> -->
+      <h3 align="center">graph generated from 311 data</h3>
+      {{ div | safe }}
+    <!--</div>-->
+</div>
+<a href="/index">go back</a>
+
+
+
+{% endblock %}
