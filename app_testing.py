@@ -10,6 +10,8 @@ from shapely.geometry import Point, shape
 import json
 import multiprocessing
 import gevent
+#from pyproj import Proj, transform
+import geocoder
 
 from ediblepickle import checkpoint
 import os
@@ -19,18 +21,15 @@ from dateutil.relativedelta import relativedelta
 import requests
 from bokeh.plotting import figure, output_file, show
 from bokeh.charts import TimeSeries, Scatter, defaults
-from bokeh.layouts import gridplot
+from bokeh.layouts import gridplot, layout, widgetbox
 from bokeh.embed import components
 from bokeh.palettes import Spectral6
-from bokeh.layouts import layout, widgetbox
-from bokeh.models import ColumnDataSource, HoverTool, Div
+from bokeh.models import ColumnDataSource, HoverTool, Div, GMapPlot, GMapOptions, WMTSTileSource, Circle, DataRange1d, PanTool, ResetTool, SaveTool, WheelZoomTool, BoxZoomTool, BoxSelectTool #ZoomInTool, ZoomOutTool, 
 from bokeh.models.widgets import Slider
 from bokeh.io import curdoc
-from bokeh.models import (GMapPlot, GMapOptions, WMTSTileSource, Circle, DataRange1d, PanTool, ResetTool, SaveTool, WheelZoomTool, BoxZoomTool, BoxSelectTool)#ZoomInTool, ZoomOutTool, 
 #from bokeh.tile_providers import STAMEN_TONER
 #from bokeh.tile_providers import CARTODBPOSITRON
-#from pyproj import Proj, transform
-import geocoder
+
 
 app = Flask(__name__)
 
@@ -69,18 +68,25 @@ def graph():
 	aftermonth = request.form['month']
 	print("The requested month is '" + aftermonth + "'")
 	afteryear = request.form['year']
-	afterdate = r"'"+afteryear+'-'+aftermonth+r"-01'"#r"'2016-01-01'"
+	afterdate = r"'"+afteryear+'-'+aftermonth+r"-01'"#r"'2016-01-01'"#T00:00:00
+	ltime = int(request.form['time'])
+	print(ltime)
+	todate = datetime.datetime.strptime(afterdate.strip("'"), "%Y-%m-%d") + relativedelta(months=ltime)
+	todate = r"'"+todate.strftime('%Y-%m-%d')+r"'"
+	#todate = r"'"+str(todate.month)+'-'+str(todate.day)+'-'+str(todate.year)+r"'"
+	#todate = r"'2016-11-01'"#r"'"+toyear+'-'+tomonth+r"-01'"#T00:00:00
 	#'''
 	cache_dir = 'cache'
 	if not os.path.exists(cache_dir):
 	    os.mkdir(cache_dir)
 
-	@checkpoint(key=lambda args, kwargs: urllib.parse.quote(args[0]) + '_' + str(args[1]) + '.p', work_dir=cache_dir, refresh=True)  #.parse'''
-	def get_data(city, rows, where,date):
+	@checkpoint(key=lambda args, kwargs: urllib.parse.quote(args[0]) +  '_' + str(args[3]).strip("'") +  '_to_' + str(args[4]).strip("'") + '.p', work_dir=cache_dir)#, refresh=True)  #.parse''' #+ '_' + str(args[1])
+	def get_data(city, rows, where,date,date2):
 	    params = { #'format'        :'json', 
 		       '$order':		 'created_date',
 				'$limit':         rows, 
-				'$where':		 'created_date>='+date, #r"created_date>='2016-01-01'",#'created_date%3E%3D-%272016-01-01%27',#>='2016-01-01'',# between \'2016-01-01T00:00:00\' and 2016-10-01T00:00:00', #"created_date in('2016')",
+				'$where':	 'created_date between ' +date+ ' and ' +todate,
+				#'$where':		 'created_date>='+date, #r"created_date>='2016-01-01'",#'created_date%3E%3D-%272016-01-01%27',#>='2016-01-01'',# between \'2016-01-01T00:00:00\' and 2016-10-01T00:00:00', #"created_date in('2016')",
 				'$select':		'created_date,closed_date,agency,incident_zip,complaint_type,descriptor,latitude,longitude',
 		       'city' :          city}#,
 		        #'$where' :         where}
@@ -94,13 +100,13 @@ def graph():
 	else:
 		city = boro.upper()
 
-	calls = 50000#100000
+	calls = 500000#100000
 	agencies = ("DEP","DOB","DOT","HPD","NYPD","DSNY","FDNY","DPR")#, "DOHMH")#,"DHS")
 
 	agencyList = ','.join('"%s"' % x for x in agencies)
 	print(agencyList)
 	print('getting data from '+city)
-	r = get_data(city,calls,'agency in('+agencyList+')',afterdate)
+	r = get_data(city,calls,'agency in('+agencyList+')',afterdate, todate)
 
 	df = pd.read_json(r.text, convert_dates=True)
 	if verbose>1: print(df.head());print(len(df));print(df.columns.tolist())
@@ -146,7 +152,7 @@ def graph():
 	defaults.plot_height = 400
 
 	if plot == 'multi':
-		p = figure(x_axis_type="datetime",plot_width=1000, plot_height=800, title=title)# title=title)
+		p = figure(x_axis_type="datetime",plot_width=1000, plot_height=800, title=title)
 		p.grid.grid_line_alpha = 0.5
 		p.xaxis.axis_label = 'Date (m-d)'
 		p.yaxis.axis_label = 'Number of calls per day'
