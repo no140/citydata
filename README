@@ -11,5 +11,5 @@ static folder holds css, js, and images, also geojson
 
 -----------------
 TensorFlow version predicts type of 311 complaint by time and location
-view tensorflow notebook online [here](https://nbviewer.jupyter.org/github/no140/citydata/blob/master/testing_tf_cleaner.html).
-view corresponding map online [here](https://tashazo.carto.com/builder/3b29add3-e1d9-426d-a9bc-28768aa61741/embed).
+view tensorflow notebook online <a href="https://nbviewer.jupyter.org/github/no140/citydata/blob/master/testing_tf_cleaner.html">here</a>.
+view corresponding map online <a href="https://tashazo.carto.com/builder/3b29add3-e1d9-426d-a9bc-28768aa61741/embed" target="_blank">here</a>.
