@@ -20,6 +20,6 @@ numpy==1.11.1
 oauthlib==0.6.1
 pandas==0.18.1
 python-dateutil==2.5.3
-requests==2.2.1
+requests==2.20.0
 ujson==1.35
 urllib3==1.7.1
